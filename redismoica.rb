@@ -2,8 +2,6 @@ require 'rubygems'
 require 'redis'
 require 'sinatra'
 
-# $redis = nil
-
 get '/' do
     if $redis.nil?
         redirect '/login'
@@ -19,7 +17,6 @@ get '/k/:key' do
     erb :value
 end
 
-
 get '/login' do
     erb :login
 end
@@ -29,6 +26,9 @@ post '/login' do
     redirect '/'
 end
 
+get '/logout' do
+    $redis = nil
+end
 
 __END__
 
@@ -42,8 +42,19 @@ __END__
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container">
+                    <ul class="nav">
+                        <li><a href="/">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <div class="container">
-        <h1>Redis-Moi-Ça</h1
+            <div class="page-header">
+            <h1 class="brand">Redis-Moi-Ça</h1>
+            </div>
         <%= yield%>
         </div>
     </body>
@@ -52,7 +63,7 @@ __END__
 @@index
 
 <div class="row">
-  <div class="span6">
+  <div class="span12">
     <h2>Connected</h2>
     <table class="table table-striped">
         <thead>
@@ -75,13 +86,21 @@ __END__
 
 
 @@login
-<p>Please login</p>
-<form method="post" action="/login" class="well form-inline">
-    <label for="host">Host</label><input name="host" type="text" value="127.0.0.1">
-    <label for="port">Port</label><input name="port" type="text" value="6379">
-    <input type="submit">
-</form>
+<div class="row">
+  <div class="span12">
+    <h2>Please login</h2>
+    <form method="post" action="/login" class="well form-inline">
+        <label for="host">Host</label><input name="host" type="text" value="127.0.0.1">
+        <label for="port">Port</label><input name="port" type="text" value="6379">
+        <input type="submit">
+    </form>
+    </div>
+</div>
 
 @@value
-<p>Key: <%= @key%></p>
-<p>Value: <%= @value%></p>
+<div class="row">
+    <div class="span12">
+        <p>Key: <%= @key%></p>
+        <p>Value: <%= @value%></p>
+    </div>
+</div>
