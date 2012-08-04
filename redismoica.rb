@@ -2,12 +2,21 @@ require 'rubygems'
 require 'redis'
 require 'sinatra'
 
+$messages = []
+
+class FlashMessage
+    attr_accessor :message, :level
+    def initialize(message, level='success')
+        @message = message
+        @level = level
+    end
+end
+
 get '/' do
     if $redis.nil?
         redirect '/login/'
     end
     @keys = $redis.keys('*')
-    logger.info @keys
     erb :index
 end
 
@@ -23,14 +32,15 @@ end
 
 post '/login/' do
     $redis = Redis.new :host=>params[:host], :port=>params[:port]
+    $messages.push(FlashMessage.new 'You are logged in')
     redirect '/'
 end
 
 get '/logout/' do
     $redis = nil
+    logger.info $messages
     redirect '/'
 end
-
 
 
 __END__
@@ -61,13 +71,26 @@ __END__
             <div class="page-header">
             <h1 class="brand">Redis-Moi-Ça</h1>
             </div>
-        <%= yield%>
+                <%
+                if not $messages.nil?
+                    if $messages.size > 0
+                        for message in $messages %>
+                        <div class="alert alert-<%=message.level%>">
+                        <%= message.message%>
+                        </div><%
+                        end
+                    end
+                end
+                # must do the logic here, it seems.
+                $messages = [] # whatever
+                %>
+            <%= yield%>
         </div>
     </body>
 </html>
 
-@@index
 
+@@index
 <div class="row">
   <div class="span12">
     <h2>Connected</h2>
@@ -102,6 +125,7 @@ __END__
     </form>
     </div>
 </div>
+
 
 @@value
 <div class="row">
