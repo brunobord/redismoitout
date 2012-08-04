@@ -67,6 +67,11 @@ get '/incr/:key/' do |key|
     redirect "/k/#{key}/"
 end
 
+post '/expire/:key/' do |key|
+    $redis.expire key, params[:ttl]
+    redirect "/k/#{key}/"
+end
+
 get '/info/' do
     @info = $redis.info
     erb :info
@@ -79,8 +84,9 @@ __END__
 <html lang="en">
     <head>
         <title>Redis-Moi-Ça</title>
-        <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css"/>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
         <script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
@@ -162,6 +168,23 @@ __END__
 
 
 @@value
+<div class="modal hide" id="change-ttl">
+  <form method="post" action="/expire/<%= @key%>/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Change TTL</h3>
+  </div>
+  <div class="modal-body">
+    <label for="ttl">Here you can change the TTL value</label>
+    <input type="text" name="ttl">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
 <div class="row">
     <div class="offset2 span6 well">
         <h3>Main data</h3>
@@ -177,10 +200,14 @@ __END__
     <div class="span3 well">
         <h3>Other data</h3>
         <dl>
-            <dt><abbr class="initialism" title="Time To Live">TTL</abbr></dt><dd><%= @ttl%></dd>
+            <dt><abbr class="initialism" title="Time To Live">TTL</abbr></dt>
+            <dd><%= @ttl%>
+                <a class="btn" data-toggle="modal" data-target="#change-ttl">Change TTL</a>
+            </dd>
         </dl>
     </div>
 </div>
+
 
 @@info
 <div class="row">
