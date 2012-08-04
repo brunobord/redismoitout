@@ -47,11 +47,12 @@ get '/logout/' do
     redirect '/'
 end
 
-get '/k/:key/' do
-    @key = params[:key]
-    @value = $redis.get params[:key]
+get '/k/:key/' do |key|
+    @key = key
+    @value = $redis.get key
     # checks on values
     @numeric = @value.is_numeric?
+    @ttl = $redis.ttl key
     erb :value
 end
 
@@ -162,16 +163,22 @@ __END__
 
 @@value
 <div class="row">
-    <div class="offset2 span8">
-        <div class="well">
-        <p>Key: <%= @key%></p>
-        <p>Value: <%= @value%></p>
-        </div>
+    <div class="offset2 span6 well">
+        <h3>Main data</h3>
+        <dl>
+            <dt>Key:</dt><dd><%= @key%></dd>
+            <dt>Value:</dt><dd><%= @value%></dd>
+        </dl>
         <p>
             <a href="/del/<%= @key%>/" class="btn btn-danger">delete</a>
             <% if @numeric %><a href="/incr/<%= @key%>/" class="btn btn-info">Incr</a><% end %>
         </p>
-
+    </div>
+    <div class="span3 well">
+        <h3>Other data</h3>
+        <dl>
+            <dt>TTL:</dt><dd><%= @ttl%></dd>
+        </dl>
     </div>
 </div>
 

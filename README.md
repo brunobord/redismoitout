@@ -18,7 +18,8 @@ You'll have to logon to your Redis server by providing its *host* and *port*.
 * INFO
 * GET
 * DEL
-* INCR (for numeric only)
+* INCR (for numeric only),
+* TTL
 
 As you can see... it's still a very young project.
 
