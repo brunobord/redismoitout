@@ -49,10 +49,15 @@ end
 
 get '/k/:key/' do |key|
     @key = key
-    @value = $redis.get key
-    @type = "string"
+    begin
+        @value = $redis.get key
+        @type = "string"
+        @numeric = @value.is_numeric?
+    rescue Redis::CommandError
+        @value = $redis.lrange key, 0, -1
+        @type = 'list'
+    end
     # checks on values
-    @numeric = @value.is_numeric?
     @ttl = $redis.ttl key
     erb :value
 end
@@ -213,7 +218,13 @@ __END__
         <h3>Main data</h3>
         <dl>
             <dt>Key</dt><dd><%= @key%></dd>
-            <dt>Value</dt><dd><%= @value%></dd>
+            <dt>Value</dt><dd>
+                <% if @type == 'string' %>
+                    <%= @value%>
+                <% elsif @type == 'list' %>
+                    [<%= @value.join ', ' %>]
+                <% end %>
+            </dd>
         </dl>
         <p>
             <a href="/del/<%= @key%>/" class="btn btn-danger">Delete</a>

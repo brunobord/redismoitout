@@ -22,6 +22,7 @@ You'll have to logon to your Redis server by providing its *host* and *port*.
 * INCR
 * TTL
 * EXPIRE
+* LRANGE
 
 As you can see... it's still a very young project.
 
