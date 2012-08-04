@@ -166,8 +166,8 @@ __END__
     <div class="offset2 span6 well">
         <h3>Main data</h3>
         <dl>
-            <dt>Key:</dt><dd><%= @key%></dd>
-            <dt>Value:</dt><dd><%= @value%></dd>
+            <dt>Key</dt><dd><%= @key%></dd>
+            <dt>Value</dt><dd><%= @value%></dd>
         </dl>
         <p>
             <a href="/del/<%= @key%>/" class="btn btn-danger">delete</a>
@@ -177,7 +177,7 @@ __END__
     <div class="span3 well">
         <h3>Other data</h3>
         <dl>
-            <dt>TTL:</dt><dd><%= @ttl%></dd>
+            <dt><abbr class="initialism" title="Time To Live">TTL</abbr></dt><dd><%= @ttl%></dd>
         </dl>
     </div>
 </div>
