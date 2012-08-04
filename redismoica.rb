@@ -4,31 +4,34 @@ require 'sinatra'
 
 get '/' do
     if $redis.nil?
-        redirect '/login'
+        redirect '/login/'
     end
     @keys = $redis.keys('*')
     logger.info @keys
     erb :index
 end
 
-get '/k/:key' do
+get '/k/:key/' do
     @key = params[:key]
     @value = $redis.get params[:key]
     erb :value
 end
 
-get '/login' do
+get '/login/' do
     erb :login
 end
 
-post '/login' do
+post '/login/' do
     $redis = Redis.new :host=>params[:host], :port=>params[:port]
     redirect '/'
 end
 
-get '/logout' do
+get '/logout/' do
     $redis = nil
+    redirect '/'
 end
+
+
 
 __END__
 
@@ -47,6 +50,9 @@ __END__
                 <div class="container">
                     <ul class="nav">
                         <li><a href="/">Home</a></li>
+                    </ul>
+                    <ul class="nav pull-right">
+                        <% if not $redis.nil? %><li><a href="/logout/">Logout</a></li><% end %>
                     </ul>
                 </div>
             </div>
@@ -76,7 +82,7 @@ __END__
         <% @keys.each_with_index do |key, idx| %>
             <tr>
                 <td><%= idx%></td>
-                <td><a href="/k/<%= key%>"><%= key%></a></td>
+                <td><a href="/k/<%= key%>/"><%= key%></a></td>
             </tr>
         <% end %>
         </tbody>
@@ -89,7 +95,7 @@ __END__
 <div class="row">
   <div class="span12">
     <h2>Please login</h2>
-    <form method="post" action="/login" class="well form-inline">
+    <form method="post" action="/login/" class="well form-inline">
         <label for="host">Host</label><input name="host" type="text" value="127.0.0.1">
         <label for="port">Port</label><input name="port" type="text" value="6379">
         <input type="submit">
