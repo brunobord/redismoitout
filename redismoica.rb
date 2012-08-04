@@ -50,10 +50,16 @@ end
 get '/k/:key/' do |key|
     @key = key
     @value = $redis.get key
+    @type = "string"
     # checks on values
     @numeric = @value.is_numeric?
     @ttl = $redis.ttl key
     erb :value
+end
+
+post '/set/:key/' do |key|
+    $redis.set key, params[:value]
+    redirect "/k/#{key}/"
 end
 
 get '/del/:key/' do |key|
@@ -185,6 +191,23 @@ __END__
   </form>
 </div>
 
+<div class="modal hide" id="set">
+  <form method="post" action="/set/<%= @key%>/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Set value</h3>
+  </div>
+  <div class="modal-body">
+    <label for="ttl">Assign a value</label>
+    <input type="text" name="value" value="<%= @value%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
 <div class="row">
     <div class="offset2 span6 well">
         <h3>Main data</h3>
@@ -193,8 +216,9 @@ __END__
             <dt>Value</dt><dd><%= @value%></dd>
         </dl>
         <p>
-            <a href="/del/<%= @key%>/" class="btn btn-danger">delete</a>
-            <% if @numeric %><a href="/incr/<%= @key%>/" class="btn btn-info">Incr</a><% end %>
+            <a href="/del/<%= @key%>/" class="btn btn-danger">Delete</a>
+            <% if @numeric %><a href="/incr/<%= @key%>/" class="btn btn-info">Increment</a><% end %>
+            <% if @type == 'string' %><a class="btn btn-primary" data-toggle="modal" data-target="#set">Set</a><% end %>
         </p>
     </div>
     <div class="span3 well">
@@ -202,7 +226,7 @@ __END__
         <dl>
             <dt><abbr class="initialism" title="Time To Live">TTL</abbr></dt>
             <dd><%= @ttl%>
-                <a class="btn" data-toggle="modal" data-target="#change-ttl">Change TTL</a>
+                <a class="btn btn-small" data-toggle="modal" data-target="#change-ttl">Change TTL</a>
             </dd>
         </dl>
     </div>
