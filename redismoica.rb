@@ -77,7 +77,7 @@ __END__
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title><%= @title %></title>
+        <title>Redis-Moi-Ça</title>
         <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css"/>
         <script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/js/bootstrap.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
