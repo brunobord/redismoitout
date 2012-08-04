@@ -12,18 +12,16 @@ class FlashMessage
     end
 end
 
-get '/' do
+before do
+    pass if request.path_info == "/login/"
     if $redis.nil?
         redirect '/login/'
     end
-    @keys = $redis.keys('*')
-    erb :index
 end
 
-get '/k/:key/' do
-    @key = params[:key]
-    @value = $redis.get params[:key]
-    erb :value
+get '/' do
+    @keys = $redis.keys('*')
+    erb :index
 end
 
 get '/login/' do
@@ -42,6 +40,16 @@ get '/logout/' do
     redirect '/'
 end
 
+get '/k/:key/' do
+    @key = params[:key]
+    @value = $redis.get params[:key]
+    erb :value
+end
+
+get '/info/' do
+    @info = $redis.info
+    erb :info
+end
 
 __END__
 
@@ -62,7 +70,10 @@ __END__
                         <li><a href="/">Home</a></li>
                     </ul>
                     <ul class="nav pull-right">
-                        <% if not $redis.nil? %><li><a href="/logout/">Logout</a></li><% end %>
+                        <% if not $redis.nil? %>
+                            <li><a href="/info/">Server Info</a></li>
+                            <li><a href="/logout/">Logout</a></li>
+                        <% end %>
                     </ul>
                 </div>
             </div>
@@ -132,5 +143,30 @@ __END__
     <div class="span12">
         <p>Key: <%= @key%></p>
         <p>Value: <%= @value%></p>
+    </div>
+</div>
+
+@@info
+<div class="row">
+    <div class="span12">
+    <h2>Server info</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Keys</th>
+                <th>Values</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% @info.each_with_index do |(key, value), idx| %>
+            <tr>
+                <td><%= idx%></td>
+                <td><%= key%></td>
+                <td><%= value%></td>
+            </tr>
+        <% end %>
+        </tbody>
+    </table>
     </div>
 </div>
