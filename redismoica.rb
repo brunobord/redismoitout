@@ -87,12 +87,12 @@ __END__
             <div class="navbar-inner">
                 <div class="container">
                     <ul class="nav">
-                        <li><a href="/">Home</a></li>
+                        <li><a href="/"><i class="icon-home icon-white"></i> Home</a></li>
                     </ul>
                     <ul class="nav pull-right">
                         <% if not $redis.nil? %>
-                            <li><a href="/info/">Server Info</a></li>
-                            <li><a href="/logout/">Logout</a></li>
+                            <li><a href="/info/"><i class="icon-info-sign icon-white"></i> Server Info</a></li>
+                            <li><a href="/logout/"><i class="icon-off icon-white"></i> Logout</a></li>
                         <% end %>
                     </ul>
                 </div>
