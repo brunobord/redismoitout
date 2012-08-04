@@ -78,6 +78,16 @@ get '/incr/:key/' do |key|
     redirect "/k/#{key}/"
 end
 
+post '/rpush/:key/' do |key|
+    $redis.rpush key, params[:value]
+    redirect "/k/#{key}/"
+end
+
+post '/lpush/:key/' do |key|
+    $redis.lpush key, params[:value]
+    redirect "/k/#{key}/"
+end
+
 post '/expire/:key/' do |key|
     $redis.expire key, params[:ttl]
     redirect "/k/#{key}/"
@@ -204,8 +214,42 @@ __END__
     <h3>Set value</h3>
   </div>
   <div class="modal-body">
-    <label for="ttl">Assign a value</label>
+    <label for="value">Assign a value</label>
     <input type="text" name="value" value="<%= @value%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
+<div class="modal hide" id="lpush">
+  <form method="post" action="/lpush/<%= @key%>/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Left push</h3>
+  </div>
+  <div class="modal-body">
+    <label for="value">Push a value on the left</label>
+    <input type="text" name="value">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
+<div class="modal hide" id="rpush">
+  <form method="post" action="/rpush/<%= @key%>/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Right push</h3>
+  </div>
+  <div class="modal-body">
+    <label for="value">Push a value on the right</label>
+    <input type="text" name="value">
   </div>
   <div class="modal-footer">
     <a href="#" class="btn" data-dismiss="modal">Cancel</a>
@@ -231,6 +275,10 @@ __END__
             <a href="/del/<%= @key%>/" class="btn btn-danger">Delete</a>
             <% if @numeric %><a href="/incr/<%= @key%>/" class="btn btn-info">Increment</a><% end %>
             <% if @type == 'string' %><a class="btn btn-primary" data-toggle="modal" data-target="#set">Set</a><% end %>
+            <% if @type == 'list' %>
+                <a class="btn btn-primary" data-toggle="modal" data-target="#lpush">LPush</a>
+                <a class="btn btn-primary" data-toggle="modal" data-target="#rpush">RPush</a>
+            <% end %>
         </p>
     </div>
     <div class="span3 well">
