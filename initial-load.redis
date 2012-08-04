@@ -1,3 +1,4 @@
 set stringkey "I am a string"
 incr counter
 set numeric 123
+set "server:name" "Redis"

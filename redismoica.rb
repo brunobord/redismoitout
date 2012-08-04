@@ -46,6 +46,12 @@ get '/k/:key/' do
     erb :value
 end
 
+get '/del/:key/' do |key|
+    $redis.del key
+    $messages.push(FlashMessage.new "`#{key}` deleted", "error")
+    redirect '/'
+end
+
 get '/info/' do
     @info = $redis.info
     erb :info
@@ -110,6 +116,7 @@ __END__
             <tr>
                 <th>#</th>
                 <th>Keys</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -117,6 +124,7 @@ __END__
             <tr>
                 <td><%= idx%></td>
                 <td><a href="/k/<%= key%>/"><%= key%></a></td>
+                <td><a href="/del/<%= key%>/" class="btn btn-danger btn-small">del</a></td>
             </tr>
         <% end %>
         </tbody>
@@ -141,8 +149,12 @@ __END__
 @@value
 <div class="row">
     <div class="span12">
+        <div class="well">
         <p>Key: <%= @key%></p>
         <p>Value: <%= @value%></p>
+        </div>
+        <p><a href="/del/<%= @key%>/" class="btn btn-danger">delete</a></p>
+
     </div>
 </div>
 

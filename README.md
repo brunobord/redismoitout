@@ -17,6 +17,7 @@ You'll have to logon to your Redis server by providing its *host* and *port*.
 * KEYS
 * INFO
 * GET
+* DEL
 
 As you can see... it's still a very young project.
 
