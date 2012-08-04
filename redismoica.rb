@@ -4,6 +4,13 @@ require 'sinatra'
 
 $messages = []
 
+# Helpers
+class String
+    def is_numeric?
+        !!Float(self) rescue false
+    end
+end
+
 class FlashMessage
     attr_accessor :message, :level
     def initialize(message, level='success')
@@ -43,6 +50,8 @@ end
 get '/k/:key/' do
     @key = params[:key]
     @value = $redis.get params[:key]
+    # checks on values
+    @numeric = @value.is_numeric?
     erb :value
 end
 
@@ -50,6 +59,11 @@ get '/del/:key/' do |key|
     $redis.del key
     $messages.push(FlashMessage.new "`#{key}` deleted", "error")
     redirect '/'
+end
+
+get '/incr/:key/' do |key|
+    $redis.incr key
+    redirect "/k/#{key}/"
 end
 
 get '/info/' do
@@ -109,7 +123,7 @@ __END__
 
 @@index
 <div class="row">
-  <div class="span12">
+  <div class="offset2 span8">
     <h2>Connected</h2>
     <table class="table table-striped">
         <thead>
@@ -135,12 +149,12 @@ __END__
 
 @@login
 <div class="row">
-  <div class="span12">
+  <div class="offset2 span8">
     <h2>Please login</h2>
-    <form method="post" action="/login/" class="well form-inline">
-        <label for="host">Host</label><input name="host" type="text" value="127.0.0.1">
-        <label for="port">Port</label><input name="port" type="text" value="6379">
-        <input type="submit">
+    <form method="post" action="/login/" class="well">
+        <label for="host">Host</label> <input name="host" type="text" value="127.0.0.1">
+        <label for="port">Port</label> <input name="port" type="text" value="6379">
+        <p><button type="submit" class="btn btn-primary">Connect</button></p>
     </form>
     </div>
 </div>
@@ -148,19 +162,22 @@ __END__
 
 @@value
 <div class="row">
-    <div class="span12">
+    <div class="offset2 span8">
         <div class="well">
         <p>Key: <%= @key%></p>
         <p>Value: <%= @value%></p>
         </div>
-        <p><a href="/del/<%= @key%>/" class="btn btn-danger">delete</a></p>
+        <p>
+            <a href="/del/<%= @key%>/" class="btn btn-danger">delete</a>
+            <% if @numeric %><a href="/incr/<%= @key%>/" class="btn btn-info">Incr</a><% end %>
+        </p>
 
     </div>
 </div>
 
 @@info
 <div class="row">
-    <div class="span12">
+    <div class="offset2 span8">
     <h2>Server info</h2>
     <table class="table table-striped">
         <thead>
