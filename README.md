@@ -30,6 +30,11 @@ As you can see... it's still a very young project.
 
 **WARNING**: this program cannot create keys yet. It only works on existing keys.
 
+### Notes on search
+
+In the search form you can specify a key pattern using "*" as a joker character.
+For more information, please refer to the [KEYS command official documentation](http://redis.io/commands/keys)
+
 ----
 
 ## License

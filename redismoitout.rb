@@ -130,7 +130,7 @@ __END__
                             <li><a href="/logout/"><i class="icon-off icon-white"></i> Logout</a></li>
                         </ul>
                         <form class="navbar-search pull-right" action="/">
-                        <input type="text" class="search-query" placeholder="Search" name="search" value="<%= @search%>">
+                        <input type="text" class="search-query" placeholder="Search" name="search" value="<%= @search if not @search.nil? and @search != "*" %>">
                         </form>
                         <% end %>
                     </div>
