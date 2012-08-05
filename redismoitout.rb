@@ -104,7 +104,7 @@ __END__
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Redis-Moi-Ça</title>
+        <title>Redis-Moi Tout</title>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
         <script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/js/bootstrap.min.js"></script>
         <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css" />
@@ -131,7 +131,7 @@ __END__
         </div>
 
             <div class="page-header">
-            <h1 class="brand">Redis-Moi-Ça</h1>
+            <h1 class="brand">Redis-Moi Tout</h1>
             </div>
                 <%
                 if not $messages.nil?

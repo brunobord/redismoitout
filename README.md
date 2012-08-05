@@ -1,4 +1,4 @@
-# Redis-Moi-Ça
+# Redis-Moi Tout
 
 This is a Sinatra-based web interface to manage redis databases.
 
@@ -6,7 +6,7 @@ This is a Sinatra-based web interface to manage redis databases.
 
 Once Sinatra and redis gems are installed, just run:
 
-    ruby redismoica.rb
+    ruby redismoitout.rb
 
 and point your browser to [http://localhost:4567/](http://localhost:4567/)
 
