@@ -27,7 +27,11 @@ before do
 end
 
 get '/' do
-    @keys = $redis.keys('*')
+    @search = "*" # Default value
+    if not params[:search].nil? and params[:search] != ""
+        @search = params[:search]
+    end
+    @keys = $redis.keys(@search)
     erb :index
 end
 
@@ -114,21 +118,24 @@ __END__
     <body>
         <div class="container">
 
-        <div class="navbar">
-            <div class="navbar-inner">
-                <div class="container">
-                    <ul class="nav">
-                        <li><a href="/"><i class="icon-home icon-white"></i> Home</a></li>
-                    </ul>
-                    <ul class="nav pull-right">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container">
+                        <ul class="nav">
+                            <li><a href="/"><i class="icon-home icon-white"></i> Home</a></li>
+                        </ul>
                         <% if not $redis.nil? %>
+                        <ul class="nav pull-right">
                             <li><a href="/info/"><i class="icon-info-sign icon-white"></i> Server Info</a></li>
                             <li><a href="/logout/"><i class="icon-off icon-white"></i> Logout</a></li>
+                        </ul>
+                        <form class="navbar-search pull-right" action="/">
+                        <input type="text" class="search-query" placeholder="Search" name="search" value="<%= @search%>">
+                        </form>
                         <% end %>
-                    </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
             <div class="page-header">
             <h1 class="brand">Redis-Moi Tout</h1>
@@ -155,7 +162,10 @@ __END__
 @@index
 <div class="row">
   <div class="offset2 span8">
-    <h2>Connected</h2>
+    <h2>Key List</h2>
+    <% if @search != "*" %>
+    <p>Searched keys: <em><%= @search%></em></p>
+    <% end %>
     <table class="table table-striped">
         <thead>
             <tr>
