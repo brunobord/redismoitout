@@ -161,6 +161,17 @@ __END__
                 $messages = [] # whatever
                 %>
 
+            <% if not $redis.nil? %>
+            <div class="row">
+                <div class="offset2 span8">
+                    <div class="pull-right btn-group">
+                        <a class="btn btn-small" href="#">SET new</a>
+                        <a class="btn btn-small" href="#">INCR new</a>
+                    </div>
+                </div>
+            </div>
+            <% end %>
+
             <%= yield%>
 
             <footer class="footer">
