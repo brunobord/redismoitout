@@ -14,19 +14,21 @@ You'll have to logon to your Redis server by providing its *host* and *port*.
 
 ## Implemented methods
 
-* KEYS
+* KEYS (partial, no query support)
 * INFO
 * GET
-* SET
+* SET (partial, only works on existing keys)
 * DEL
-* INCR
+* INCR (partial, only works on existing keys)
 * TTL
 * EXPIRE
 * LRANGE
-* LPUSH
-* RPUSH
+* LPUSH (partial, only works on existing keys)
+* RPUSH (partial, only works on existing keys)
 
 As you can see... it's still a very young project.
+
+**WARNING**: this program cannot create keys yet. It only works on existing keys.
 
 ----
 
