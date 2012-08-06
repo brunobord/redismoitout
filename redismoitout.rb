@@ -14,9 +14,20 @@ end
 class FlashMessage
     attr_accessor :message, :level
     def initialize(message, level='success')
+        raise ArgumentError, "Argument must be in ['success', 'error', 'info', 'block']" unless ['success', 'error', 'info', 'block'].include? level
         @message = message
         @level = level
     end
+end
+
+def set_key(key, value)
+    $redis.set key, value
+    redirect "/k/#{key}/"
+end
+
+def incr_key(key)
+    $redis.incr key
+    redirect "/k/#{key}/"
 end
 
 before do
@@ -66,40 +77,47 @@ get '/k/:key/' do |key|
     erb :value
 end
 
-post '/set/:key/' do |key|
-    $redis.set key, params[:value]
-    redirect "/k/#{key}/"
+post '/set/' do
+    logger.info "Set numero #1"
+    set_key params[:key], params[:value]
 end
 
 get '/del/:key/' do |key|
-    $redis.del key
-    $messages.push(FlashMessage.new "`#{key}` deleted", "error")
+    $redis.del params[:key]
+    $messages.push(FlashMessage.new "`#{params[:key]}` deleted", "error")
     redirect '/'
 end
 
-get '/incr/:key/' do |key|
-    $redis.incr key
-    redirect "/k/#{key}/"
+get '/incr/:key/' do
+    incr_key params[:key]
 end
 
-post '/rpush/:key/' do |key|
-    $redis.rpush key, params[:value]
-    redirect "/k/#{key}/"
+post '/incr/' do
+    incr_key params[:key]
 end
 
-post '/lpush/:key/' do |key|
-    $redis.lpush key, params[:value]
-    redirect "/k/#{key}/"
+post '/rpush/' do
+    $redis.rpush params[:key], params[:value]
+    redirect "/k/#{params[:key]}/"
 end
 
-post '/expire/:key/' do |key|
-    $redis.expire key, params[:ttl]
-    redirect "/k/#{key}/"
+post '/lpush/' do
+    $redis.lpush params[:key], params[:value]
+    redirect "/k/#{params[:key]}/"
+end
+
+post '/expire/' do
+    $redis.expire params[:key], params[:ttl]
+    redirect "/k/#{params[:key]}/"
 end
 
 get '/info/' do
     @info = $redis.info
     erb :info
+end
+
+get '/test/' do
+    erb :test, :layout => false
 end
 
 __END__
@@ -119,6 +137,9 @@ __END__
                 margin-top: 45px;
                 padding: 35px 0 36px;
                 border-top: 1px solid #E5E5E5;
+            }
+            .subnav {
+                padding-bottom: 1em;
             }
         </style>
     </head>
@@ -162,14 +183,16 @@ __END__
                 %>
 
             <% if not $redis.nil? %>
+            <section class="subnav">
             <div class="row">
                 <div class="offset2 span8">
                     <div class="pull-right btn-group">
-                        <a class="btn btn-small" href="#">SET new</a>
-                        <a class="btn btn-small" href="#">INCR new</a>
+                        <a class="btn btn-small" data-toggle="modal" data-target="#set-new">SET new</a>
+                        <a class="btn btn-small" data-toggle="modal" data-target="#incr-new">INCR new</a>
                     </div>
                 </div>
             </div>
+            </section>
             <% end %>
 
             <%= yield%>
@@ -181,6 +204,43 @@ __END__
             </footer>
 
         </div>
+
+    <!-- Dialogs -->
+<div class="modal hide" id="set-new">
+  <form method="post" action="/set/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Set a new value</h3>
+  </div>
+  <div class="modal-body">
+    <label for="key">Key name</label>
+    <input type="text" name="key">
+    <label for="key">Value</label>
+    <input type="text" name="value">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
+<div class="modal hide" id="incr-new">
+  <form method="post" action="/incr/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Create a new counter</h3>
+  </div>
+  <div class="modal-body">
+    <label for="key">Key name</label>
+    <input type="text" name="key">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
 
     </body>
 </html>
@@ -229,74 +289,6 @@ __END__
 
 
 @@value
-<div class="modal hide" id="change-ttl">
-  <form method="post" action="/expire/<%= @key%>/">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">×</button>
-    <h3>Change TTL</h3>
-  </div>
-  <div class="modal-body">
-    <label for="ttl">Here you can change the TTL value</label>
-    <input type="text" name="ttl">
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-    <button type="submit" class="btn btn-primary">Save changes</button>
-  </div>
-  </form>
-</div>
-
-<div class="modal hide" id="set">
-  <form method="post" action="/set/<%= @key%>/">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">×</button>
-    <h3>Set value</h3>
-  </div>
-  <div class="modal-body">
-    <label for="value">Assign a value</label>
-    <input type="text" name="value" value="<%= @value%>">
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-    <button type="submit" class="btn btn-primary">Save changes</button>
-  </div>
-  </form>
-</div>
-
-<div class="modal hide" id="lpush">
-  <form method="post" action="/lpush/<%= @key%>/">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">×</button>
-    <h3>Left push</h3>
-  </div>
-  <div class="modal-body">
-    <label for="value">Push a value on the left</label>
-    <input type="text" name="value">
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-    <button type="submit" class="btn btn-primary">Save changes</button>
-  </div>
-  </form>
-</div>
-
-<div class="modal hide" id="rpush">
-  <form method="post" action="/rpush/<%= @key%>/">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">×</button>
-    <h3>Right push</h3>
-  </div>
-  <div class="modal-body">
-    <label for="value">Push a value on the right</label>
-    <input type="text" name="value">
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-    <button type="submit" class="btn btn-primary">Save changes</button>
-  </div>
-  </form>
-</div>
-
 <div class="row">
     <div class="offset2 span6 well">
         <h3>Main data</h3>
@@ -335,6 +327,79 @@ __END__
     </div>
 </div>
 
+<!-- Dialogs -->
+<div class="modal hide" id="change-ttl">
+  <form method="post" action="/expire/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Change TTL</h3>
+  </div>
+  <div class="modal-body">
+    <label for="ttl">Here you can change the TTL value</label>
+    <input type="text" name="ttl">
+    <input type="hidden" name="key" value="<%= @key%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
+<div class="modal hide" id="set">
+  <form method="post" action="/set/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Set value</h3>
+  </div>
+  <div class="modal-body">
+    <label for="value">Assign a value</label>
+    <input type="text" name="value" value="<%= @value%>">
+    <input type="hidden" name="key" value="<%= @key%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
+<div class="modal hide" id="lpush">
+  <form method="post" action="/lpush/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Left push</h3>
+  </div>
+  <div class="modal-body">
+    <label for="value">Push a value on the left</label>
+    <input type="text" name="value">
+    <input type="hidden" name="key" value="<%= @key%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
+<div class="modal hide" id="rpush">
+  <form method="post" action="/rpush/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Right push</h3>
+  </div>
+  <div class="modal-body">
+    <label for="value">Push a value on the right</label>
+    <input type="text" name="value">
+    <input type="hidden" name="key" value="<%= @key%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
 
 @@info
 <div class="row">
@@ -360,3 +425,6 @@ __END__
     </table>
     </div>
 </div>
+
+@@test
+<p>Not here</p>
