@@ -295,6 +295,7 @@ __END__
         <label for="host">Host</label> <input name="host" type="text" value="127.0.0.1">
         <label for="port">Port</label> <input name="port" type="text" value="6379">
         <label for="Password">Password</label> <input name="password" type="password" value="" placeholder="Password">
+        <span class="help-block">Optional authentication. May be required by your server.</span>
         <p><button type="submit" class="btn btn-primary">Connect</button></p>
     </form>
     </div>
