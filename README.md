@@ -14,6 +14,7 @@ You'll have to logon to your Redis server by providing its *host* and *port*.
 
 ## Implemented methods
 
+* AUTH
 * KEYS
 * INFO
 * GET

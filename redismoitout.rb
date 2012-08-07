@@ -32,7 +32,15 @@ end
 
 before do
     pass if request.path_info == "/login/"
-    if $redis.nil?
+    if not $redis.nil?
+        begin
+            $redis.ping
+        rescue Redis::CommandError
+            $messages.clear # no way to keep on
+            $messages.push(FlashMessage.new 'Connection failed, please retry and make sure you are providing the correct parameters', 'error')
+            redirect '/login/'
+        end
+    else
         redirect '/login/'
     end
 end
@@ -52,6 +60,14 @@ end
 
 post '/login/' do
     $redis = Redis.new :host=>params[:host], :port=>params[:port]
+    if params[:password]
+        begin
+            $redis.auth params[:password]
+        rescue Redis::CommandError
+            $messages.push(FlashMessage.new "Wrong password", "error")
+            redirect '/login/'
+        end
+    end
     $messages.push(FlashMessage.new 'You are logged in')
     redirect '/'
 end
@@ -114,10 +130,6 @@ end
 get '/info/' do
     @info = $redis.info
     erb :info
-end
-
-get '/test/' do
-    erb :test, :layout => false
 end
 
 __END__
@@ -282,6 +294,7 @@ __END__
     <form method="post" action="/login/" class="well">
         <label for="host">Host</label> <input name="host" type="text" value="127.0.0.1">
         <label for="port">Port</label> <input name="port" type="text" value="6379">
+        <label for="Password">Password</label> <input name="password" type="password" value="" placeholder="Password">
         <p><button type="submit" class="btn btn-primary">Connect</button></p>
     </form>
     </div>
@@ -425,6 +438,3 @@ __END__
     </table>
     </div>
 </div>
-
-@@test
-<p>Not here</p>
