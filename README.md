@@ -2,6 +2,9 @@
 
 This is a Sinatra-based web interface to manage redis databases.
 
+![Screenshot](http://farm9.staticflickr.com/8435/7742349534_6876bc87ed_c.jpg)
+
+
 ## Usage
 
 Once Sinatra and redis gems are installed, just run:
