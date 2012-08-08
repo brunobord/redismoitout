@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="offset2 span8">
+    <h2>Key List</h2>
+    <% if @search != "*" %>
+    <p>Searched keys: <em><%= @search%></em></p>
+    <% end %>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Keys</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% @keys.each_with_index do |key, idx| %>
+            <tr>
+                <td><%= idx%></td>
+                <td><a href="/k/<%= key%>/"><%= key%></a></td>
+                <td><a href="/del/<%= key%>/" class="btn btn-danger btn-small">del</a></td>
+            </tr>
+        <% end %>
+        </tbody>
+    </table>
+  </div>
+</div>
