@@ -1,0 +1,110 @@
+<div class="row">
+    <div class="offset2 span6 well">
+        <h3>Main data</h3>
+        <dl>
+            <dt>Key</dt><dd><%= @key%></dd>
+            <dt>Value</dt><dd>
+                <% if @type == 'string' %>
+                    <%= @value%>
+                <% elsif @type == 'list' %>
+                    [<%= @value.join ', ' %>]
+                <% end %>
+            </dd>
+            <% if @type == 'list' %>
+                <dt>Length</dt>
+                <dd><%= @value.length%></dd>
+            <% end %>
+        </dl>
+        <p>
+            <% if @numeric %><a href="/incr/<%= @key%>/" class="btn btn-info">Increment</a><% end %>
+            <% if @type == 'string' %><a class="btn btn-info" data-toggle="modal" data-target="#set">Set</a><% end %>
+            <% if @type == 'list' %>
+                <a class="btn btn-info" data-toggle="modal" data-target="#lpush">LPush</a>
+                <a class="btn btn-info" data-toggle="modal" data-target="#rpush">RPush</a>
+            <% end %>
+            <a href="/del/<%= @key%>/" class="btn btn-danger">Delete</a>
+        </p>
+    </div>
+    <div class="span3 well">
+        <h3>Other data</h3>
+        <dl>
+            <dt><abbr class="initialism" title="Time To Live">TTL</abbr></dt>
+            <dd><%= @ttl%>
+                <a class="btn btn-small" data-toggle="modal" data-target="#change-ttl">Change TTL</a>
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<!-- Dialogs -->
+<div class="modal hide" id="change-ttl">
+  <form method="post" action="/expire/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Change TTL</h3>
+  </div>
+  <div class="modal-body">
+    <label for="ttl">Here you can change the TTL value</label>
+    <input type="text" name="ttl">
+    <input type="hidden" name="key" value="<%= @key%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
+<div class="modal hide" id="set">
+  <form method="post" action="/set/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Set value</h3>
+  </div>
+  <div class="modal-body">
+    <label for="value">Assign a value</label>
+    <input type="text" name="value" value="<%= @value%>">
+    <input type="hidden" name="key" value="<%= @key%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
+<div class="modal hide" id="lpush">
+  <form method="post" action="/lpush/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Left push</h3>
+  </div>
+  <div class="modal-body">
+    <label for="value">Push a value on the left</label>
+    <input type="text" name="value">
+    <input type="hidden" name="key" value="<%= @key%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
+<div class="modal hide" id="rpush">
+  <form method="post" action="/rpush/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Right push</h3>
+  </div>
+  <div class="modal-body">
+    <label for="value">Push a value on the right</label>
+    <input type="text" name="value">
+    <input type="hidden" name="key" value="<%= @key%>">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
