@@ -60,7 +60,7 @@ end
 
 post '/login/' do
     $redis = Redis.new :host=>params[:host], :port=>params[:port]
-    if params[:password]
+    if params[:password] != ''
         begin
             $redis.auth params[:password]
         rescue Redis::CommandError
