@@ -74,7 +74,6 @@ end
 
 get '/logout/' do
     $redis = nil
-    logger.info $messages
     redirect '/'
 end
 
@@ -94,7 +93,6 @@ get '/k/:key/' do |key|
 end
 
 post '/set/' do
-    logger.info "Set numero #1"
     set_key params[:key], params[:value]
 end
 
