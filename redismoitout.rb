@@ -24,7 +24,7 @@ def incr_key(key)
     redirect "/k/#{key}/"
 end
 
-
+# -----
 
 # Flash Message. Should be displayed only once and vanish from the session
 class FlashMessage
@@ -36,12 +36,18 @@ class FlashMessage
     end
 end
 
+# -----
+
 # Will be executed before every request
 before do
     pass if request.path_info == "/login/"
     if not $redis.nil?
         begin
             $redis.ping
+        rescue Redis::CannotConnectError
+            $messages.clear
+            $messages.push(FlashMessage.new 'Connection failed. The target server is probably not accessible', 'error')
+            redirect '/login/'
         rescue Redis::CommandError
             $messages.clear # no way to keep on
             $messages.push(FlashMessage.new 'Connection failed, please retry and make sure you are providing the correct parameters', 'error')
