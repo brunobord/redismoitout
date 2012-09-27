@@ -51,10 +51,11 @@
             <% if not $redis.nil? %>
             <section class="subnav">
             <div class="row">
-                <div class="offset2 span8">
-                    <div class="pull-right btn-group">
+                <div class="offset2 span10">
+                    <div class="pull-right">
                         <a class="btn btn-small" data-toggle="modal" data-target="#set-new">SET new</a>
                         <a class="btn btn-small" data-toggle="modal" data-target="#incr-new">INCR new</a>
+                        <a class="btn btn-small" data-toggle="modal" data-target="#push-new">(LR)PUSH new</a>
                     </div>
                 </div>
             </div>
@@ -81,7 +82,7 @@
   <div class="modal-body">
     <label for="key">Key name</label>
     <input type="text" name="key">
-    <label for="key">Value</label>
+    <label for="value">Value</label>
     <input type="text" name="value">
   </div>
   <div class="modal-footer">
@@ -107,6 +108,26 @@
   </div>
   </form>
 </div>
+
+<div class="modal hide" id="push-new">
+  <form method="post" action="/lpush/">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>Create a new list</h3>
+  </div>
+  <div class="modal-body">
+    <label for="key">Key name</label>
+    <input type="text" name="key">
+    <label for="value">First Value</label>
+    <input type="text" name="value">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+</div>
+
 
     </body>
 </html>
