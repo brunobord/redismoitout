@@ -171,7 +171,7 @@ $modals = {
             <input type="text" name="ttl">
             <input type="hidden" name="key" value="<%= key%>">'
     },
-    'set' => {
+    'set-new' => {
         'modal_id' => 'set-new',
         'modal_action' => '/set/',
         'modal_title' => 'Set a new value',

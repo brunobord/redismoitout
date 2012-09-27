@@ -112,8 +112,8 @@
 
 <script type="text/javascript">
 $(document).ready( function() {
-    $.each(['/modal/set/'], function (index, value) {
-        $.get(value, {key: '<%= @key%>', value: '<%= @value%>'}, function(html) {
+    $.each(['/modal/set-new/'], function (index, value) {
+        $.get(value, function(html) {
           console.log(html);
           $('body').append(html);
         });
