@@ -39,7 +39,7 @@
 <!-- Dialogs -->
 <script type="text/javascript">
 $(document).ready( function() {
-    $.each(['/modal/ttl/'], function (index, value) {
+    $.each(['/modal/ttl/', '/modal/set/'], function (index, value) {
         $.get(value, {key: '<%= @key%>', value: '<%= @value%>'}, function(html) {
           $('body').append(html);
         });

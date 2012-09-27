@@ -179,6 +179,14 @@ $modals = {
             <input type="text" name="key">
             <label for="value">Value</label>
             <input type="text" name="value">'
+    },
+    'set' => {
+        'modal_id' => 'set',
+        'modal_action' => '/set/',
+        'modal_title' => 'Change value',
+        'modal_form' => '<label for="value">Assign a value</label>
+            <input type="text" name="value" value="<%= value%>">
+            <input type="hidden" name="key" value="<%= key%>">'
     }
 }
 
@@ -193,6 +201,7 @@ get '/modal/:modal/' do |modal|
         @modal_title = modal['modal_title']
         modal_form_template = ERB.new modal['modal_form']
         key = params["key"]
+        value = params["value"]
         @modal_form = modal_form_template.result(binding)
         erb :modal, :layout => false
     end
