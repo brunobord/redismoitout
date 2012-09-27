@@ -170,6 +170,15 @@ $modals = {
         'modal_form' => '<label for="ttl">Here you can change the TTL value</label>
             <input type="text" name="ttl">
             <input type="hidden" name="key" value="<%= key%>">'
+    },
+    'set' => {
+        'modal_id' => 'set-new',
+        'modal_action' => '/set/',
+        'modal_title' => 'Set a new value',
+        'modal_form' => '<label for="key">Key name</label>
+            <input type="text" name="key">
+            <label for="value">Value</label>
+            <input type="text" name="value">'
     }
 }
 

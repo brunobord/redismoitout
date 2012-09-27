@@ -39,9 +39,8 @@
 <!-- Dialogs -->
 <script type="text/javascript">
 $(document).ready( function() {
-    $.each(['/modal/ttl/' /*, '/modal/set/'*/], function (index, value) {
+    $.each(['/modal/ttl/'], function (index, value) {
         $.get(value, {key: '<%= @key%>', value: '<%= @value%>'}, function(html) {
-          console.log(html);
           $('body').append(html);
         });
     });
