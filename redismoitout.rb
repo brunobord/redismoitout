@@ -169,7 +169,7 @@ $modals = {
         'modal_title' => 'Change TTL',
         'modal_form' => '<label for="ttl">Here you can change the TTL value</label>
             <input type="text" name="ttl">
-            <input type="hidden" name="key" value="<%= params[:key]%>">'
+            <input type="hidden" name="key" value="<%= key%>">'
     }
 }
 
@@ -177,15 +177,14 @@ get '/modal/:modal/' do |modal|
     if not $modals.key? modal
         status 404
     end
-    logger.info params
     modal = $modals[modal]
     if not modal.nil?
         @modal_id = modal['modal_id']
         @modal_action = modal['modal_action']
         @modal_title = modal['modal_title']
         modal_form_template = ERB.new modal['modal_form']
-        @modal_form = modal_form_template.result
-        logger.info @modal_form
+        key = params["key"]
+        @modal_form = modal_form_template.result(binding)
         erb :modal, :layout => false
     end
 end
