@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'redis'
 require 'sinatra'
+require 'erb'
 
 $messages = []
 
@@ -97,13 +98,17 @@ end
 # Display key details (value, meta-information)
 get '/k/:key/' do |key|
     @key = key
-    begin
+    @type = $redis.type key
+
+    case @type
+    when "string"
         @value = $redis.get key
-        @type = "string"
         @numeric = @value.is_numeric?
-    rescue Redis::CommandError
+    when "list"
         @value = $redis.lrange key, 0, -1
-        @type = 'list'
+    else
+        @value = nil
+        $messages.push(FlashMessage.new 'Unknown/Unimplemented type', "error")
     end
     # checks on values
     @ttl = $redis.ttl key
@@ -154,4 +159,33 @@ end
 get '/info/' do
     @info = $redis.info
     erb :info
+end
+
+# Modals
+$modals = {
+    'ttl' => {
+        'modal_id' => 'change-ttl',
+        'modal_action' => '/expire/',
+        'modal_title' => 'Change TTL',
+        'modal_form' => '<label for="ttl">Here you can change the TTL value</label>
+            <input type="text" name="ttl">
+            <input type="hidden" name="key" value="<%= params[:key]%>">'
+    }
+}
+
+get '/modal/:modal/' do |modal|
+    if not $modals.key? modal
+        status 404
+    end
+    logger.info params
+    modal = $modals[modal]
+    if not modal.nil?
+        @modal_id = modal['modal_id']
+        @modal_action = modal['modal_action']
+        @modal_title = modal['modal_title']
+        modal_form_template = ERB.new modal['modal_form']
+        @modal_form = modal_form_template.result
+        logger.info @modal_form
+        erb :modal, :layout => false
+    end
 end
