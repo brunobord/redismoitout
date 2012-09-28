@@ -204,6 +204,14 @@ $modals = {
             <input type="text" name="key">
             <label for="value">Value</label>
             <input type="text" name="value">'
+    },
+    'sadd' => {
+        'modal_id' => 'sadd',
+        'modal_action' => '/sadd/',
+        'modal_title' => 'Add a value to set',
+        'modal_form' => '<input type="hidden" name="key" value="<%= key %>">
+            <label for="value">Value</label>
+            <input type="text" name="value">'
     }
 }
 

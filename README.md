@@ -29,6 +29,7 @@ You'll have to logon to your Redis server by providing its *host* and *port*.
 * LRANGE
 * LPUSH (partial, only works on existing keys)
 * RPUSH (partial, only works on existing keys)
+* SADD (create and update sets)
 
 As you can see... it's still a very young project.
 

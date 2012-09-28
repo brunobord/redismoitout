@@ -16,11 +16,14 @@
             <% end %>
         </dl>
         <p>
-            <% if @numeric %><a href="/incr/<%= @key%>/" class="btn btn-info">Increment</a><% end %>
-            <% if @type == 'string' %><a class="btn btn-info" data-toggle="modal" data-target="#set">Set</a><% end %>
+            <% if @numeric %><a href="/incr/<%= @key%>/" class="btn btn-info">INCR</a><% end %>
+            <% if @type == 'string' %><a class="btn btn-info" data-toggle="modal" data-target="#set">SET</a><% end %>
             <% if @type == 'list' %>
-                <a class="btn btn-info" data-toggle="modal" data-target="#lpush">LPush</a>
-                <a class="btn btn-info" data-toggle="modal" data-target="#rpush">RPush</a>
+                <a class="btn btn-info" data-toggle="modal" data-target="#lpush">LPUSH</a>
+                <a class="btn btn-info" data-toggle="modal" data-target="#rpush">RPUSH</a>
+            <% end %>
+            <% if @type == 'set' %>
+                <a class="btn btn-info" data-toggle="modal" data-target="#sadd">SADD</a>
             <% end %>
             <a href="/del/<%= @key%>/" class="btn btn-danger">Delete</a>
         </p>
@@ -39,7 +42,7 @@
 <!-- Dialogs -->
 <script type="text/javascript">
 $(document).ready( function() {
-    $.each(['/modal/ttl/', '/modal/set/'], function (index, value) {
+    $.each(['/modal/ttl/', '/modal/set/', '/modal/sadd/'], function (index, value) {
         $.get(value, {key: '<%= @key%>', value: '<%= @value%>'}, function(html) {
           $('body').append(html);
         });
