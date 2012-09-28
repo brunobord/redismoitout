@@ -106,6 +106,8 @@ get '/k/:key/' do |key|
         @numeric = @value.is_numeric?
     when "list"
         @value = $redis.lrange key, 0, -1
+    when "set"
+        @value = $redis.smembers key
     else
         @value = nil
         $messages.push(FlashMessage.new 'Unknown/Unimplemented type', "error")
@@ -161,6 +163,12 @@ get '/info/' do
     erb :info
 end
 
+# Process SADD command (form)
+post '/sadd/' do
+    $redis.sadd params[:key], params[:value]
+    redirect "/k/#{params[:key]}/"
+end
+
 # Modals
 $modals = {
     'ttl' => {
@@ -187,6 +195,15 @@ $modals = {
         'modal_form' => '<label for="value">Assign a value</label>
             <input type="text" name="value" value="<%= value%>">
             <input type="hidden" name="key" value="<%= key%>">'
+    },
+    'sadd-new' => {
+        'modal_id' => 'sadd-new',
+        'modal_action' => '/sadd/',
+        'modal_title' => 'Create a set',
+        'modal_form' => '<label for="key">Key name</label>
+            <input type="text" name="key">
+            <label for="value">Value</label>
+            <input type="text" name="value">'
     }
 }
 

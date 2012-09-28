@@ -6,7 +6,7 @@
             <dt>Value</dt><dd>
                 <% if @type == 'string' %>
                     <%= @value%>
-                <% elsif @type == 'list' %>
+                <% elsif @type == 'list' or @type == 'set' %>
                     [<%= @value.join ', ' %>]
                 <% end %>
             </dd>
