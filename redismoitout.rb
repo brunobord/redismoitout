@@ -190,6 +190,7 @@ $modals = {
     }
 }
 
+# build the modal snippet for inclusion in templates
 get '/modal/:modal/' do |modal|
     if not $modals.key? modal
         status 404
